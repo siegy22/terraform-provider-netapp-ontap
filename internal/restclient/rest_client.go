@@ -19,6 +19,7 @@ import (
 type ConnectionProfile struct {
 	// TODO: add certs in addition to basic authentication
 	// TODO: Add Timeout (currently hardcoded to 10 seconds)
+	Scheme                string
 	Hostname              string
 	Username              string
 	Password              string
@@ -219,6 +220,9 @@ func NewClient(ctx context.Context, cxProfile ConnectionProfile, tag string, job
 		return nil, errors.New(msg)
 	}
 	httpProfile.APIRoot = "api"
+	if httpProfile.Scheme = "" {
+	  httpProfile.Scheme = "https"
+	}
 	maxConcurrentRequests := cxProfile.MaxConcurrentRequests
 	if maxConcurrentRequests == 0 {
 		maxConcurrentRequests = 6

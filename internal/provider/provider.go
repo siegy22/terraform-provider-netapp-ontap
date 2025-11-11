@@ -39,6 +39,7 @@ type ONTAPProvider struct {
 // ConnectionProfileModel associate a connection profile with a name
 // TODO: augment address with hostname, ...
 type ConnectionProfileModel struct {
+	Scheme                types.String `tfsdk:"scheme"`
 	Name                  types.String `tfsdk:"name"`
 	Hostname              types.String `tfsdk:"hostname"`
 	Username              types.String `tfsdk:"username"`
@@ -87,6 +88,10 @@ func (p *ONTAPProvider) Schema(ctx context.Context, req provider.SchemaRequest, 
 						"name": schema.StringAttribute{
 							MarkdownDescription: "Profile name",
 							Required:            true,
+						},
+						"scheme": schema.StringAttribute{
+							MarkdownDescription: "URL Scheme to be used to build the ONTAP management interface URL, defaults to https",
+							Optional:            true,
 						},
 						"hostname": schema.StringAttribute{
 							MarkdownDescription: "ONTAP management interface IP address or name. For AWS Lambda, the management endpoints for the FSxN system.",
@@ -173,6 +178,7 @@ func (p *ONTAPProvider) Configure(ctx context.Context, req provider.ConfigureReq
 			validateCerts = connectionProfile.ValidateCerts.ValueBool()
 		}
 		connectionProfiles[connectionProfile.Name.ValueString()] = connection.Profile{
+			Scheme:                connectionProfile.Scheme.ValueString(),
 			Hostname:              connectionProfile.Hostname.ValueString(),
 			Username:              connectionProfile.Username.ValueString(),
 			Password:              connectionProfile.Password.ValueString(),
